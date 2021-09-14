@@ -60,7 +60,7 @@ namespace Sustainsys.Saml2.Configuration
 
             try
             {
-                elementToEncrypt.OwnerDocument.DocumentElement.Decrypt(certificate.PrivateKey);
+                elementToEncrypt.OwnerDocument.DocumentElement.Decrypt(certificate.GetPrivateKey());
             }
             catch (CryptographicException)
             {

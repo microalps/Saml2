@@ -166,6 +166,16 @@ namespace Sustainsys.Saml2.Tests
         }
 
         [TestMethod]
+        public void XmlHelpers_IsSignedByInMemory()
+        {
+            var xml = "<xml ID=\"someID\"><content>text</content></xml>";
+            var xmlDoc = XmlHelpers.XmlDocumentFromString(xml);
+            xmlDoc.Sign(SignedXmlHelper.TestCertInMemory);
+
+            xmlDoc.DocumentElement.IsSignedBy(SignedXmlHelper.TestCertInMemory).Should().BeTrue();
+        }
+
+        [TestMethod]
         public void XmlHelpers_IsSignedBy_ThrowsOnWrongCert()
         {
             var xml = "<xml ID=\"someID\"><content>text</content></xml>";
@@ -406,9 +416,7 @@ $@"<xml>
             reference.AddTransform(new XmlDsigExcC14NTransform());
             reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
             sx.AddReference(reference);
-            sx.SigningKey = EnvironmentHelpers.IsNetCore ? SignedXmlHelper.TestCert.PrivateKey :
-				((RSACryptoServiceProvider)SignedXmlHelper.TestCert.PrivateKey)
-                .GetSha256EnabledRSACryptoServiceProvider();
+            sx.SigningKey = SignedXmlHelper.TestCert.GetPrivateKey();
 
             sx.SignedInfo.SignatureMethod = SignedXml.XmlDsigRSASHA1Url;
             sx.ComputeSignature();
@@ -438,9 +446,7 @@ $@"<xml>
             reference.AddTransform(new XmlDsigExcC14NTransform());
             reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
             sx.AddReference(reference);
-            sx.SigningKey = EnvironmentHelpers.IsNetCore ? SignedXmlHelper.TestCert.PrivateKey :
-				((RSACryptoServiceProvider)SignedXmlHelper.TestCert.PrivateKey)
-                .GetSha256EnabledRSACryptoServiceProvider();
+            sx.SigningKey = SignedXmlHelper.TestCert.GetPrivateKey();
 
             sx.SignedInfo.SignatureMethod = SecurityAlgorithms.RsaSha256Signature;
             sx.ComputeSignature();

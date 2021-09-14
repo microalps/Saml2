@@ -109,8 +109,11 @@ namespace Sustainsys.Saml2.Configuration
             {
                 string fileName = FileName;
                 fileName = PathHelper.MapPath(fileName);
-                
+#if NET472_OR_GREATER 
+                return new X509Certificate2(fileName, "", X509KeyStorageFlags.EphemeralKeySet);
+#else // Unfortunately .NET Standard and 4.7.1 and earlier frameworks doesn't support this. ToDo: Add a .NET Core build that can make use of this
                 return new X509Certificate2(fileName, "", X509KeyStorageFlags.MachineKeySet);
+#endif
             }
             else
             {

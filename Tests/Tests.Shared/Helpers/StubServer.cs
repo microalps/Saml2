@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP2_1
+﻿#if NETCOREAPP2_1_OR_GREATER
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
@@ -25,7 +25,7 @@ namespace Sustainsys.Saml2.Tests.Helpers
 {
     public class StubServer
     {
-#if NETCOREAPP2_1
+#if NETCOREAPP2_1_OR_GREATER
 		private static IWebHost host;
 #else
         private static IDisposable host;
@@ -384,7 +384,7 @@ entityID=""http://localhost:13428/idpMetadataVeryShortCacheDuration"" cacheDurat
 			await next.Invoke();
 		}
 
-#if NETCOREAPP2_1
+#if NETCOREAPP2_1_OR_GREATER
 		public static void Start()
         {
 			host = new WebHostBuilder()

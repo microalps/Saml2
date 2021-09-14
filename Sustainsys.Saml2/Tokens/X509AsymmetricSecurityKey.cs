@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sustainsys.Saml2.Internal;
+using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
@@ -30,7 +31,7 @@ namespace Sustainsys.Saml2.Tokens
 				throw new NotSupportedException("The certificate doesn't have a private key");
 			}
 
-			AsymmetricAlgorithm aa = privateKey ? certificate.PrivateKey : certificate.PublicKey.Key;
+			AsymmetricAlgorithm aa = privateKey ? certificate.GetPrivateKey() : certificate.PublicKey.Key;
 
 			switch (algorithm)
 			{
@@ -117,7 +118,7 @@ namespace Sustainsys.Saml2.Tokens
 			{
 				case SignedXml.XmlDsigDSAUrl:
 					{
-						DSA dsa = certificate.PrivateKey as DSA;
+						DSA dsa = certificate.GetPrivateKey() as DSA;
 						if (dsa == null)
 						{
 							throw new NotSupportedException("The certificate does not contain a DSA key");
@@ -129,7 +130,7 @@ namespace Sustainsys.Saml2.Tokens
 				case SecurityAlgorithms.RsaSha384Signature:
 				case SecurityAlgorithms.RsaSha512Signature:
 					{
-						RSA rsa = certificate.PrivateKey as RSA;
+						RSA rsa = certificate.GetPrivateKey() as RSA;
 						if (rsa == null)
 						{
 							throw new NotSupportedException("The certificate does not contain an RSA key");

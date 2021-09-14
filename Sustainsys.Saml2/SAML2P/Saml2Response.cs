@@ -463,7 +463,7 @@ namespace Sustainsys.Saml2.Saml2P
                 {
                     try
                     {
-                        assertions.AddRange(encryptedAssertions.Decrypt(serviceCertificate.PrivateKey)
+                        assertions.AddRange(encryptedAssertions.Decrypt(serviceCertificate.GetPrivateKey())
                                 .Select(xe => (XmlElement)xe.GetElementsByTagName("Assertion", Saml2Namespaces.Saml2Name)[0]));
                         decrypted = true;
                         options.SPOptions.Logger.WriteVerbose($"Assertion decryption succeeded using {serviceCertificate.Thumbprint}");

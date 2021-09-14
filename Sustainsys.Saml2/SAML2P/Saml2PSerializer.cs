@@ -81,7 +81,7 @@ namespace Sustainsys.Saml2.Saml2P
 				{
 					try
 					{
-						decrypted = encrypted.DocumentElement.Decrypt(cert.PrivateKey);
+						decrypted = encrypted.DocumentElement.Decrypt(cert.GetPrivateKey());
 						break;
 					}
 					catch (CryptographicException)
