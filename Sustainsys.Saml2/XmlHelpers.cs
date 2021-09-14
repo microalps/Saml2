@@ -195,8 +195,7 @@ namespace Sustainsys.Saml2
             // For both, the ID/Reference and the Transform/Canonicalization see as well: 
             // https://www.oasis-open.org/committees/download.php/35711/sstc-saml-core-errata-2.0-wd-06-diff.pdf section 5.4.2 and 5.4.3
 
-            signedXml.SigningKey = ((RSACryptoServiceProvider)cert.PrivateKey)
-                .GetSha256EnabledRSACryptoServiceProvider();
+            signedXml.SigningKey = cert.GetPrivateKey();
             signedXml.SignedInfo.CanonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
             signedXml.SignedInfo.SignatureMethod = signingAlgorithm;
 
@@ -325,9 +324,12 @@ namespace Sustainsys.Saml2
                         keyIdentifier.GetType().Name));
                 }
 
-                if(!new X509Certificate2(rawCert.GetX509RawData()).Verify())
+                using (var certObj = new X509Certificate2(rawCert.GetX509RawData()))
                 {
-                    throw new InvalidSignatureException("The signature was valid, but the verification of the certificate failed. Is it expired or revoked? Are you sure you really want to enable ValidateCertificates (it's normally not needed)?");
+                    if (!certObj.Verify())
+                    {
+                        throw new InvalidSignatureException("The signature was valid, but the verification of the certificate failed. Is it expired or revoked? Are you sure you really want to enable ValidateCertificates (it's normally not needed)?");
+                    }
                 }
             }
         }

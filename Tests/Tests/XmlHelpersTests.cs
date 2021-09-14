@@ -172,6 +172,16 @@ namespace Sustainsys.Saml2.Tests
         }
 
         [TestMethod]
+        public void XmlHelpers_IsSignedByInMemory()
+        {
+            var xml = "<xml ID=\"someID\"><content>text</content></xml>";
+            var xmlDoc = XmlHelpers.XmlDocumentFromString(xml);
+            xmlDoc.Sign(SignedXmlHelper.TestCertInMemory);
+
+            xmlDoc.DocumentElement.IsSignedBy(SignedXmlHelper.TestCertInMemory).Should().BeTrue();
+        }
+
+        [TestMethod]
         public void XmlHelpers_IsSignedBy_ThrowsOnWrongCert()
         {
             var xml = "<xml ID=\"someID\"><content>text</content></xml>";
@@ -252,7 +262,7 @@ namespace Sustainsys.Saml2.Tests
             var xmlDoc = XmlHelpers.XmlDocumentFromString(xml);
 
             var signedXml = new SignedXml(xmlDoc);
-            signedXml.SigningKey = (RSACryptoServiceProvider)SignedXmlHelper.TestCert.PrivateKey;
+            signedXml.SigningKey = SignedXmlHelper.TestCert.GetPrivateKey();
             signedXml.SignedInfo.CanonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
 
             var ref1 = new Reference { Uri = "#myxml" };
@@ -319,7 +329,7 @@ namespace Sustainsys.Saml2.Tests
             var xmlDoc = XmlHelpers.XmlDocumentFromString(xml);
 
             var signedXml = new SignedXml(xmlDoc);
-            signedXml.SigningKey = (RSACryptoServiceProvider)SignedXmlHelper.TestCert.PrivateKey;
+            signedXml.SigningKey = SignedXmlHelper.TestCert.GetPrivateKey();
             signedXml.SignedInfo.CanonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
 
             var reference = new Reference { Uri = "#MyXml" };
@@ -404,8 +414,7 @@ $@"<xml>
             reference.AddTransform(new XmlDsigExcC14NTransform());
             reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
             sx.AddReference(reference);
-            sx.SigningKey = ((RSACryptoServiceProvider)SignedXmlHelper.TestCert.PrivateKey)
-                .GetSha256EnabledRSACryptoServiceProvider();
+            sx.SigningKey = SignedXmlHelper.TestCert.GetPrivateKey();
 
             sx.SignedInfo.SignatureMethod = SignedXml.XmlDsigRSASHA1Url;
             sx.ComputeSignature();
@@ -435,8 +444,7 @@ $@"<xml>
             reference.AddTransform(new XmlDsigExcC14NTransform());
             reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
             sx.AddReference(reference);
-            sx.SigningKey = ((RSACryptoServiceProvider)SignedXmlHelper.TestCert.PrivateKey)
-                .GetSha256EnabledRSACryptoServiceProvider();
+            sx.SigningKey = SignedXmlHelper.TestCert.GetPrivateKey();
 
             sx.SignedInfo.SignatureMethod = SignedXml.XmlDsigRSASHA256Url;
             sx.ComputeSignature();

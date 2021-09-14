@@ -110,7 +110,7 @@ namespace Sustainsys.Saml2.Configuration
                 string fileName = FileName;
                 fileName = PathHelper.MapPath(fileName);
                 
-                return new X509Certificate2(fileName, "", X509KeyStorageFlags.MachineKeySet);
+                return new X509Certificate2(fileName, "", X509KeyStorageFlags.EphemeralKeySet);
             }
             else
             {
@@ -118,10 +118,9 @@ namespace Sustainsys.Saml2.Configuration
                 // in the config.
                 if (StoreLocation != 0)
                 {
-                    var store = new X509Store(StoreName, StoreLocation);
-                    store.Open(OpenFlags.ReadOnly);
-                    try
+                    using (var store = new X509Store(StoreName, StoreLocation))
                     {
+                        store.Open(OpenFlags.ReadOnly);
 
                         var certs = store.Certificates.Find(X509FindType, FindValue, false);
 
@@ -134,10 +133,6 @@ namespace Sustainsys.Saml2.Configuration
                         }
 
                         return certs[0];
-                    }
-                    finally
-                    {
-                        store.Close();
                     }
                 }
                 else
